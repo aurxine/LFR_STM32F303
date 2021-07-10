@@ -53,6 +53,8 @@ static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
 static void svIRSensorReadTask(void* parameters); // The task that reads IR sensors
 uint8_t ucReadAllIRSensors(); // svIRSensorReadTask will call this func to get the values of every IR sensors
+int iExponentialWeightedError(uint8_t sensor_data, int weight); // weights are higher from the center
+int iEqualWeightedError(uint8_t sensor_data, int weight); // all weights are equal
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -247,6 +249,28 @@ uint8_t ucReadAllIRSensors()
 	}
 
 	return sensor_vals;
+}
+
+/*
+ * @brief	Calculate Weighted error from sensor data where
+ * 			errors are exponentially increasing from the center
+ *
+ *
+ * */
+int iExponentialWeightedError(uint8_t sensor_data, int weight)
+{
+
+}
+
+/*
+ * @brief	Calculate Weighted error from sensor data where
+ * 			errors are exponentially increasing from the center
+ *
+ *
+ * */
+int iEqualWeightedError(uint8_t sensor_data, int weight)
+{
+
 }
 /* USER CODE END 4 */
 
