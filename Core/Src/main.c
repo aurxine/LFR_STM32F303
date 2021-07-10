@@ -51,7 +51,8 @@
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 /* USER CODE BEGIN PFP */
-
+static void svIRSensorReadTask(void* parameters); // The task that reads IR sensors
+uint8_t ucReadAllIRSensors(); // svIRSensorReadTask will call this func to get the values of every IR sensors
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -66,7 +67,9 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+  TaskHandle_t IR_sensor_task_handle;
 
+  BaseType_t status;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -94,6 +97,9 @@ int main(void)
 //
 //  SEGGER_SYSVIEW_Start();
 
+  status = xTaskCreate(svIRSensorReadTask, "IR_Sensor_Reading_Task", 200, NULL, 4, &IR_sensor_task_handle);
+
+  configASSERT(status == pdPASS);
 
   vTaskStartScheduler();
   /* USER CODE END 2 */
@@ -219,7 +225,29 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+static void svIRSensorReadTask(void* parameters)
+{
+	while(1)
+	{
+		uint8_t sensor_data = ucReadAllIRSensors();
+	}
+}
 
+uint8_t ucReadAllIRSensors()
+{
+	uint8_t sensor_vals = 0;
+
+	for(int i = 0; i < TOTAL_IR_SENSORS; i++)
+	{
+		HAL_GPIO_WritePin(S0_PORT, S0, i & (1 << 0));
+		HAL_GPIO_WritePin(S1_PORT, S1, i & (1 << 1));
+		HAL_GPIO_WritePin(S2_PORT, S2, i & (1 << 2));
+
+		sensor_vals |= HAL_GPIO_ReadPin(IR_CHANNEL_PORT, IR_CHANNEL) << i;
+	}
+
+	return sensor_vals;
+}
 /* USER CODE END 4 */
 
  /**

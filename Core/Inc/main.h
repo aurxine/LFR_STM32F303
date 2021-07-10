@@ -117,9 +117,18 @@ void Error_Handler(void);
 #define MEMS_INT2_Pin GPIO_PIN_1
 #define MEMS_INT2_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
-#define LED_GREEN_PIN	LD6_Pin
-#define LED_RED_PIN		LD3_Pin
-#define LED_ORANGE_PIN	LD5_Pin
+#define TOTAL_IR_SENSORS		8
+#define S0						LD5_Pin
+#define S0_PORT					LD5_GPIO_Port
+
+#define S1  					LD3_Pin
+#define S1_PORT  				LD3_GPIO_Port
+
+#define S2						LD4_Pin
+#define S2_PORT					LD4_GPIO_Port
+
+#define IR_CHANNEL				B1_Pin
+#define IR_CHANNEL_PORT			B1_GPIO_Port
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
