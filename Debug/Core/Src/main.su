@@ -1,7 +1,9 @@
-main.c:67:5:main	32	static,ignoring_inline_asm
-main.c:122:6:SystemClock_Config	72	static
-main.c:160:13:MX_GPIO_Init	48	static
-main.c:228:13:svIRSensorReadTask	24	static
-main.c:236:9:ucReadAllIRSensors	16	static
-main.c:261:6:HAL_TIM_PeriodElapsedCallback	16	static
-main.c:278:6:Error_Handler	4	static,ignoring_inline_asm
+main.c:70:5:main	32	static,ignoring_inline_asm
+main.c:125:6:SystemClock_Config	72	static
+main.c:163:13:MX_GPIO_Init	48	static
+main.c:231:13:svIRSensorReadTask	24	static
+main.c:241:9:ucReadAllIRSensors	16	static
+main.c:263:5:iExponentialWeightedError	48	static
+main.c:287:5:iEqualWeightedError	32	static
+main.c:314:6:HAL_TIM_PeriodElapsedCallback	16	static
+main.c:331:6:Error_Handler	4	static,ignoring_inline_asm
