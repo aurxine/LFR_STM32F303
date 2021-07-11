@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <math.h>
 #include "FreeRTOS.h"
 #include "task.h"
 /* USER CODE END Includes */
@@ -232,6 +233,7 @@ static void svIRSensorReadTask(void* parameters)
 	while(1)
 	{
 		uint8_t sensor_data = ucReadAllIRSensors();
+		int error = iExponentialWeightedError(sensor_data, 2);
 	}
 }
 
@@ -259,7 +261,20 @@ uint8_t ucReadAllIRSensors()
  * */
 int iExponentialWeightedError(uint8_t sensor_data, int weight)
 {
+	int error = 0;
 
+	for(int i = 1; i <= TOTAL_IR_SENSORS/2; i++)
+	{
+		error += ((sensor_data & (1 << (TOTAL_IR_SENSORS/2 - i))) >> (TOTAL_IR_SENSORS/2 - i)) * pow(weight, i);
+	}
+
+
+	for(int i = 0; i < TOTAL_IR_SENSORS/2; i++)
+	{
+ 		error += ((sensor_data & (1 << (TOTAL_IR_SENSORS/2 + i))) >> (TOTAL_IR_SENSORS/2 + i)) * -1* pow(weight, i + 1);
+	}
+
+	return error;
 }
 
 /*
@@ -270,7 +285,20 @@ int iExponentialWeightedError(uint8_t sensor_data, int weight)
  * */
 int iEqualWeightedError(uint8_t sensor_data, int weight)
 {
+	int error = 0;
 
+	for(int i = 1; i <= TOTAL_IR_SENSORS/2; i++)
+	{
+		error += ((sensor_data & (1 << (TOTAL_IR_SENSORS/2 - i))) >> (TOTAL_IR_SENSORS/2 - i)) * weight;
+	}
+
+
+	for(int i = 0; i < TOTAL_IR_SENSORS/2; i++)
+	{
+		error += ((sensor_data & (1 << (TOTAL_IR_SENSORS/2 + i))) >> (TOTAL_IR_SENSORS/2 + i)) * -1* weight;
+	}
+
+	return error;
 }
 /* USER CODE END 4 */
 
