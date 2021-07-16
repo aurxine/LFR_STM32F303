@@ -50,6 +50,8 @@ extern "C" {
 
 /* USER CODE END EM */
 
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -88,8 +90,6 @@ void Error_Handler(void);
 #define LD3_GPIO_Port GPIOE
 #define LD5_Pin GPIO_PIN_10
 #define LD5_GPIO_Port GPIOE
-#define LD7_Pin GPIO_PIN_11
-#define LD7_GPIO_Port GPIOE
 #define LD9_Pin GPIO_PIN_12
 #define LD9_GPIO_Port GPIOE
 #define LD10_Pin GPIO_PIN_13
@@ -129,6 +129,30 @@ void Error_Handler(void);
 
 #define IR_CHANNEL				B1_Pin
 #define IR_CHANNEL_PORT			B1_GPIO_Port
+
+
+#define PERIPHERAL_CLOCK		48000000UL
+#define PRESCALER				48
+#define PWM_RESOLUTION			1000
+#define MAX_PWM_VAL				PWM_RESOLUTION
+#define PWM_PERIOD				PRESCALER*PWM_RESOLUTION/PERIPHERAL_CLOCK
+#define PWM_FREQUENCY			1/PWM_PERIOD
+
+#define RIGHT_MOTOR_TIM			&htim4
+#define RIGHT_MOTOR_PIN_1		12
+#define RIGHT_MOTOR_PORT_1		GPIOD
+#define RIGHT_MOTOR_PIN_1_CH	TIM_CHANNEL_1
+#define RIGHT_MOTOR_PIN_2		13
+#define RIGHT_MOTOR_PORT_2		GPIOD
+#define RIGHT_MOTOR_PIN_2_CH	TIM_CHANNEL_2
+
+#define LEFT_MOTOR_TIM			&htim3
+#define LEFT_MOTOR_PIN_1		6
+#define LEFT_MOTOR_PORT_1		GPIOC
+#define LEFT_MOTOR_PIN_1_CH		TIM_CHANNEL_1
+#define LEFT_MOTOR_PIN_2		7
+#define LEFT_MOTOR_PORT_2		GPIOC
+#define LEFT_MOTOR_PIN_2_CH		TIM_CHANNEL_1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus
