@@ -39,7 +39,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+#define DWT_CTRL		(*(volatile uint32_t*)0xE0001000)
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -48,7 +48,28 @@ TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
-#define DWT_CTRL		(*(volatile uint32_t*)0xE0001000)
+
+/*
+ * P:							Proportional controller
+ * I:							Integral controller
+ * D:							Differnetial controller
+ * Kp:							Coefficient for P controller
+ * Ki:							Coefficient for I controller
+ * Kd:							Coefficient for D controller
+ * Kl:							Coefficient for left motor
+ * Kr:							Coefficient for right motor
+ * eroor:						Error from the IR sensors
+ * prev_error:					Previous error
+ * right_motor_base_speed:		Base speed for right motor when error is 0
+ * left_motor_base_speed:		Base speed for left motor when error is 0*/
+
+float Kp = 0.5;//random untested value assigned
+float Ki = 0.5;//random untested value assigned
+float Kd = 0.5;//random untested value assigned
+float Kl = -1;//random untested value assigned
+float Kr = 1;//random untested value assigned
+float left_motor_base_speed = MAX_PWM_VAL/1.5, right_motor_base_speed = MAX_PWM_VAL/1.5;//random untested value assigned
+int P, I, D, error, prev_error = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -66,6 +87,7 @@ int iEqualWeightedError(uint8_t sensor_data, int weight); // all weights are equ
 static void svMotorRunTask(void* parameters);
 void vRunMotor(int left_speed, int right_speed);
 
+int iPID();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -412,7 +434,7 @@ static void svIRSensorReadTask(void* parameters)
 	while(1)
 	{
 		uint8_t sensor_data = ucReadAllIRSensors();
-		int error = iExponentialWeightedError(sensor_data, 2);
+		error = iExponentialWeightedError(sensor_data, 2);
 	}
 }
 
@@ -485,10 +507,11 @@ static void svMotorRunTask(void* parameters)
 {
 	while(1)
 	{
-		vRunMotor(500, -500);
-		vTaskDelay(pdMS_TO_TICKS(5000));
-		vRunMotor(-500, 500);
-		vTaskDelay(pdMS_TO_TICKS(5000));
+		int pid_val = iPID();
+		int left_motor_speed = Kl*pid_val + left_motor_base_speed;
+		int right_motor_speed = Kr*pid_val + right_motor_base_speed;
+
+		vRunMotor(left_motor_speed, right_motor_speed);
 	}
 }
 
@@ -519,6 +542,16 @@ void vRunMotor(int left_speed, int right_speed)
 		__HAL_TIM_SetCompare(RIGHT_MOTOR_TIM, RIGHT_MOTOR_PIN_1_CH, 0);
 	}
 
+}
+
+int iPID()
+{
+	P = error;
+	I += error;
+	D = error - prev_error;
+	prev_error = error;
+
+	return Kp*P + Ki*I + Kd*D;
 }
 /* USER CODE END 4 */
 
