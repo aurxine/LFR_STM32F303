@@ -136,7 +136,7 @@ int main(void)
 //  SEGGER_SYSVIEW_Start();
   HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2); // Starting PWM
 
-  status = xTaskCreate(svIRSensorReadTask, "IR_Sensor_Reading_Task", 200, NULL, 3, &IR_sensor_task_handle);
+  status = xTaskCreate(svIRSensorReadTask, "IR_Sensor_Reading_Task", 200, NULL, 4, &IR_sensor_task_handle);
 
   configASSERT(status == pdPASS);
 
@@ -435,6 +435,7 @@ static void svIRSensorReadTask(void* parameters)
 	{
 		uint8_t sensor_data = ucReadAllIRSensors();
 		error = iExponentialWeightedError(sensor_data, 2);
+		taskYIELD();
 	}
 }
 
@@ -512,6 +513,7 @@ static void svMotorRunTask(void* parameters)
 		int right_motor_speed = Kr*pid_val + right_motor_base_speed;
 
 		vRunMotor(left_motor_speed, right_motor_speed);
+		taskYIELD();
 	}
 }
 
